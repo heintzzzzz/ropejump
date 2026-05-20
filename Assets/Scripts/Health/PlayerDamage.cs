@@ -21,6 +21,25 @@ public class PlayerDamage : MonoBehaviour
         int layerIndex = other.gameObject.layer;
         string layerName = LayerMask.LayerToName(layerIndex);
 
+        Debug.Log(layerIndex + "AAAAAAA Damage_____" + layerName); 
+        
+        if (other.CompareTag("Danger") || other.CompareTag("Enemy") || other.CompareTag("Player")) 
+        {
+            Debug.Log("PlayerDamage____Danger" + other);  
+        }
+        
+        /*if (layerName == "ProjectileDisabled")    
+        {
+            if (other.CompareTag("EnemyProjectile"))
+            {
+                Debug.Log("Блокировано событие вражеский снаряд");    
+            }
+
+            Debug.Log("Блокированое событие");
+            return;
+        }*/
+        
+        /*
         if (layerName == "ProjectileDisabled")    
         {
             if (other.CompareTag("EnemyProjectile"))
@@ -66,7 +85,7 @@ public class PlayerDamage : MonoBehaviour
             {
                 Debug.Log("PlayerDamage____xxxxxxxxxx444444444" + other);   
             }
-        }
+        }*/ 
 
     }
 }

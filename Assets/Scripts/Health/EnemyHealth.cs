@@ -54,7 +54,7 @@ public class EnemyHealth : MonoBehaviour
     }
 
     public void OnTriggerEnter2D(Collider2D other) {
-        if (other.CompareTag("PlayerProjectile") || other.CompareTag("PlayerMelee"))
+     /*   if (other.CompareTag("PlayerProjectile") || other.CompareTag("PlayerMelee"))
         {
             int damageToApply = 0;
 
@@ -67,6 +67,8 @@ public class EnemyHealth : MonoBehaviour
 
             TakeDamage(damageToApply);
         }
+
+*/
     }
 
     private void TakeDamage(int damage) {

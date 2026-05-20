@@ -9,6 +9,7 @@ public class CharMovement : CharComponents
     private readonly int movingParamater = Animator.StringToHash("Moving");
 
     private CharFlip charFlip; 
+    private RubberBandController rbCont; 
     
     
     
@@ -21,6 +22,7 @@ public class CharMovement : CharComponents
     {
         base.Start();
         charFlip = character.GetComponent<CharFlip>(); 
+        // rbCont = character.GetComponent<RubberBandController>(); 
         MoveSpeed = walkSpeed; 
         
         if (!isPlayer)

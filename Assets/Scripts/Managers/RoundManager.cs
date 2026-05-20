@@ -6,7 +6,7 @@ public class RoundManager : MonoBehaviour
 {
     [Header("Fighters")]
     public RubberBandController player1;
-    public RubberBandController player2; 
+    public RubberBandController enemy; 
 
     [Header("Health References")]
     // public CharacterHealth player1Health;  
@@ -40,10 +40,11 @@ public class RoundManager : MonoBehaviour
         timeRemaining = roundDuration;
 
         player1.StartCycle();
-        // player2.StartCycle();
+		// if (enemy != null) enemy.StartCycle();
+		enemy.StartCycle();
 
         onRoundStart?.Invoke();
-        StartCoroutine(RoundTimer());
+        StartCoroutine(RoundTimer()); 
     }
 
     public void EndRound(string winner)
@@ -53,6 +54,7 @@ public class RoundManager : MonoBehaviour
         StopAllCoroutines();
 
         player1.StopCycle();
+		if (enemy != null) enemy.StopCycle();
         // player2.StopCycle();
 
         Debug.Log($"[Round] Over – {winner}");
