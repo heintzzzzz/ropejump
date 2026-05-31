@@ -361,7 +361,7 @@ MonoBehaviour:
   entryDamage: 1
   targetLayers:
     serializedVersion: 2
-    m_Bits: 524288
+    m_Bits: 1572864
   applyKnockback: 0
   knockbackForce: 6
   applyStatusOnExit: 0
@@ -379,8 +379,8 @@ MonoBehaviour:
   scalePunch: 0.12
   continuousShake: 0
   shakeIntensity: 0.04
-  tickParticles: {fileID: 0}
-  entryParticles: {fileID: 0}
+  tickParticlesPrefab: {fileID: 0}
+  entryParticlesPrefab: {fileID: 2540440680803506888, guid: f6cf61393055e3f33841c73e8f1aa893, type: 3}
   showWarning: 1
   warningDuration: 1.5
   startActive: 1
@@ -2063,8 +2063,8 @@ MonoBehaviour:
   scalePunch: 0.12
   continuousShake: 0
   shakeIntensity: 0.04
-  tickParticles: {fileID: 0}
-  entryParticles: {fileID: 0}
+  tickParticlesPrefab: {fileID: 0}
+  entryParticlesPrefab: {fileID: 0}
   showWarning: 1
   warningDuration: 1.5
   startActive: 1
@@ -2832,6 +2832,10 @@ PrefabInstance:
     - target: {fileID: 6665283441354956705, guid: f6cf61393055e3f33841c73e8f1aa893, type: 3}
       propertyPath: m_Name
       value: FX_Fire_Tick
+      objectReference: {fileID: 0}
+    - target: {fileID: 6665283441354956705, guid: f6cf61393055e3f33841c73e8f1aa893, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

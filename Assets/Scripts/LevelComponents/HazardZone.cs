@@ -123,12 +123,12 @@ public class HazardZone : MonoBehaviour
     //  Частицы
     // ─────────────────────────────────────────────────────────────
 
-    [Header("Частицы")]
-    [Tooltip("Система частиц для тика урона (брызги / искры / дым).")]
-    public ParticleSystem tickParticles;
+    [Header("Частицы (префабы)")]
+    [Tooltip("Префаб партикла для тика урона. Loop=false, StopAction=Destroy.")]
+    public ParticleSystem tickParticlesPrefab;
 
-    [Tooltip("Система частиц при входе в зону (опционально).")]
-    public ParticleSystem entryParticles;
+    [Tooltip("Префаб партикла при входе игрока в зону.")]
+    public ParticleSystem entryParticlesPrefab;
 
     // ─────────────────────────────────────────────────────────────
     //  Предупреждение перед активацией
@@ -176,7 +176,8 @@ public class HazardZone : MonoBehaviour
     private Vector3 baseScale;
     private Color baseColor;
 
-    private bool isActive = false; 
+    private Vector3 baseLocalPosition;  // якорная позиция для дрожания
+    private bool isActive = false;
     private bool isFlashing = false;
 
     // Список игроков внутри зоны + их таймеры тиков
@@ -191,7 +192,8 @@ public class HazardZone : MonoBehaviour
         sr  = GetComponent<SpriteRenderer>();
         col = GetComponent<Collider2D>();
         col.isTrigger = true;
-        baseScale = transform.localScale;
+        baseScale         = transform.localScale;
+        baseLocalPosition = transform.localPosition;  // якорь для shake
 
         ApplyHazardPreset();
 
@@ -233,8 +235,8 @@ public class HazardZone : MonoBehaviour
         // if (entryDamage > 0) DealDamage(health, entryDamage); 
 
         // Частицы входа
-        if (entryParticles != null)
-            entryParticles.Play();
+        if (entryParticlesPrefab != null)
+            Instantiate(entryParticlesPrefab, other.transform.position, Quaternion.identity);
 
         // Knockback
         if (applyKnockback)
@@ -298,7 +300,7 @@ public class HazardZone : MonoBehaviour
     //  Тиковый урон
     // ─────────────────────────────────────────────────────────────
 
-    private void TickDamageAll()
+    private void TickDamageAll() 
     {
         // Копируем ключи чтобы безопасно итерировать
         var keys = new List<Health>(targetsInside.Keys);
@@ -306,8 +308,6 @@ public class HazardZone : MonoBehaviour
         foreach (var health in keys)
         {
             if (health == null) { targetsInside.Remove(health); continue; }
-
-			Debug.Log("TickDamageAll" + health); 
 
             targetsInside[health] += Time.deltaTime;
 
@@ -323,7 +323,7 @@ public class HazardZone : MonoBehaviour
     private void DealDamage(Health health, int amount)
     {
         // health.TakeDamage(amount);
-        // onDamageDealt?.Invoke(health.gameObject, amount);
+        onDamageDealt?.Invoke(health.gameObject, amount);
     }
 
     // ─────────────────────────────────────────────────────────────
@@ -332,12 +332,9 @@ public class HazardZone : MonoBehaviour
 
     private void PlayTickEffects(Vector3 pos)
     {
-        // Частицы
-        if (tickParticles != null)
-        {
-            tickParticles.transform.position = pos;
-            tickParticles.Play();
-        }
+        // Спавним новый экземпляр префаба — он сам себя уничтожит (StopAction = Destroy)
+        if (tickParticlesPrefab != null)
+            Instantiate(tickParticlesPrefab, pos, Quaternion.identity);
 
         // Вспышка цвета
         if (sr != null && !isFlashing)
@@ -388,9 +385,10 @@ public class HazardZone : MonoBehaviour
 
     private void AnimateShake()
     {
-        float ox = Mathf.PerlinNoise(Time.time * 30f, 0f) - 0.5f;
-        float oy = Mathf.PerlinNoise(0f, Time.time * 30f) - 0.5f;
-        transform.localPosition += new Vector3(ox, oy, 0f) * shakeIntensity;
+        // Смещение ОТНОСИТЕЛЬНО базовой позиции — не накапливается
+        float ox = (Mathf.PerlinNoise(Time.time * 30f, 0f) - 0.5f) * 2f;
+        float oy = (Mathf.PerlinNoise(0f, Time.time * 30f) - 0.5f) * 2f;
+        transform.localPosition = baseLocalPosition + new Vector3(ox, oy, 0f) * shakeIntensity;
     }
 
     // ─────────────────────────────────────────────────────────────
@@ -504,8 +502,7 @@ public class HazardZone : MonoBehaviour
                 flashColor       = new Color(1f, 0.9f, 0f, 0.95f);
                 pulseWhenActive  = true;
                 pulseSpeed       = 3f;
-                // continuousShake  = true;
-                continuousShake  = false;
+                continuousShake  = true;
                 shakeIntensity   = 0.03f;
                 applyStatusOnExit = true;         // поджог
                 statusDuration   = 2f;
@@ -528,8 +525,7 @@ public class HazardZone : MonoBehaviour
                 idleColor        = new Color(0.7f, 0.7f, 0.9f, 0.5f);
                 flashColor       = new Color(1f, 1f, 1f, 1f);
                 pulseWhenActive  = false;
-                // continuousShake  = true;
-                continuousShake  = false; 
+                continuousShake  = true;
                 shakeIntensity   = 0.05f;
                 scaleOnTick      = true;
                 scalePunch       = 0.2f;
@@ -549,7 +545,7 @@ public class HazardZone : MonoBehaviour
     // ─────────────────────────────────────────────────────────────
 
     private bool IsTargetLayer(GameObject go) =>
-        (targetLayers.value & (1 << go.layer)) != 0; 
+        (targetLayers.value & (1 << go.layer)) != 0;
 }
 
 
@@ -567,7 +563,7 @@ public class SlowEffect : MonoBehaviour
     public float Multiplier { get; private set; } = 1f;
     private bool applied = false;
 
-    public void Apply(float multiplier) 
+    public void Apply(float multiplier)
     {
         Multiplier = multiplier;
         applied = true;
