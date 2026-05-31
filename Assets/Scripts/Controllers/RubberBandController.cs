@@ -225,11 +225,11 @@ public class RubberBandController : MonoBehaviour
     /// </summary>
     private void HandleHorizontalInput()
     {
-        //float h = Input.GetAxisRaw("Horizontal");
-        //float speed = horizontalSpeed * CurrentHorizontalMultiplier;
-        //Vector2 vel = rb.linearVelocity;
-        //vel.x = h * speed;
-        //rb.linearVelocity = vel; 
+        // float h = Input.GetAxisRaw("Horizontal");
+        // float speed = horizontalSpeed * CurrentHorizontalMultiplier;
+        // Vector2 vel = rb.linearVelocity;
+        // vel.x = h * speed;
+        // rb.linearVelocity = vel; 
     }
 
 	public void HandleBlock() {

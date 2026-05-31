@@ -161,7 +161,7 @@ public class LevelManager : Singleton<LevelManager>
         }
 
 			if (started == false) {
-            	Debug.Log("Нажато Esc222222!");  
+            	// Debug.Log("Нажато Esc222222!");  
 				roundManager.StartRound();	
 				started = true;
 			}

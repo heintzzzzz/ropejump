@@ -61,12 +61,16 @@ public class EnemyHealth : MonoBehaviour
         Debug.Log(layerIndex + "AAAAAAA " + other +" Damage_____" + layerName); 
         
         // if (other.CompareTag("Danger") || other.CompareTag("Enemy") || other.CompareTag("Player")) 
-        if (other.CompareTag("Danger")) 
+        
+/*
+		if (other.CompareTag("Danger")) 
         { 
                 int damageToApply = other.GetComponent<HazardZone>().damagePerTick;
                 Debug.Log(damageToApply + "EnemyDamage____Danger" + other);   
                 TakeDamage(damageToApply); 
+				return; 
         }
+*/  
 
         /*   if (other.CompareTag("PlayerProjectile") || other.CompareTag("PlayerMelee"))
                 {

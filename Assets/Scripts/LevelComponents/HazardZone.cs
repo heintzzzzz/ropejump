@@ -230,8 +230,7 @@ public class HazardZone : MonoBehaviour
         targetsInside[health] = 0f;
 
         // Мгновенный урон при входе
-        if (entryDamage > 0)
-            DealDamage(health, entryDamage);
+        // if (entryDamage > 0) DealDamage(health, entryDamage); 
 
         // Частицы входа
         if (entryParticles != null)
@@ -308,12 +307,14 @@ public class HazardZone : MonoBehaviour
         {
             if (health == null) { targetsInside.Remove(health); continue; }
 
+			Debug.Log("TickDamageAll" + health); 
+
             targetsInside[health] += Time.deltaTime;
 
             if (targetsInside[health] >= tickInterval)
             {
                 targetsInside[health] = 0f;
-                DealDamage(health, damagePerTick);
+                // DealDamage(health, damagePerTick);
                 PlayTickEffects(health.transform.position);
             }
         }
@@ -321,8 +322,8 @@ public class HazardZone : MonoBehaviour
 
     private void DealDamage(Health health, int amount)
     {
-        health.TakeDamage(amount);
-        onDamageDealt?.Invoke(health.gameObject, amount);
+        // health.TakeDamage(amount);
+        // onDamageDealt?.Invoke(health.gameObject, amount);
     }
 
     // ─────────────────────────────────────────────────────────────
@@ -453,7 +454,7 @@ public class HazardZone : MonoBehaviour
             if (acc >= 1f)
             {
                 acc -= 1f;
-                health.TakeDamage(Mathf.RoundToInt(dps));
+                // health.TakeDamage(Mathf.RoundToInt(dps));
             }
             yield return null;
         }
