@@ -231,4 +231,8 @@ public class RubberBandController : MonoBehaviour
         //vel.x = h * speed;
         //rb.linearVelocity = vel; 
     }
+
+	public void HandleBlock() {
+		// Debug.Log("STOPPPPPPPPPPPPPPPPPPPP");
+	}
 }

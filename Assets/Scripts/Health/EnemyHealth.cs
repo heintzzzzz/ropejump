@@ -12,7 +12,7 @@ public class EnemyHealth : MonoBehaviour
     private GameObject enemyBar; // currentHealtbar instance
     // private Image enemyHealthBar; // healthbar schedule
     private Slider enemyHealthBar; // healthbar schedule 
-    private Health enemyHealth; 
+    private Health enemyHealthComp; 
     private float enemyCurrentHealth = 1f;
     private float enemyMaxHealth = 1f;
     [SerializeField] private TextMeshProUGUI _currentHealthTMP;
@@ -21,15 +21,15 @@ public class EnemyHealth : MonoBehaviour
 
     void Start()
     {
-        enemyHealth = GetComponent<Health>();
+        enemyHealthComp = GetComponent<Health>();
         if (healthDataItem != null) 
         {
             enemyCurrentHealth = healthDataItem.initialHealth;
             enemyMaxHealth = healthDataItem.maxHealth; 
             
-            if (enemyHealth != null)
+            if (enemyHealthComp != null)
             {
-                enemyHealth.SetHealthData(enemyCurrentHealth, enemyMaxHealth, false);
+                enemyHealthComp.SetHealthData(enemyCurrentHealth, enemyMaxHealth, false);
             }
 
         } 
@@ -54,33 +54,51 @@ public class EnemyHealth : MonoBehaviour
     }
 
     public void OnTriggerEnter2D(Collider2D other) {
-     /*   if (other.CompareTag("PlayerProjectile") || other.CompareTag("PlayerMelee"))
-        {
-            int damageToApply = 0;
 
-            if (other.CompareTag("PlayerProjectile")) damageToApply = other.GetComponent<Projectile>().currentDamage;
+        int layerIndex = other.gameObject.layer;
+        string layerName = LayerMask.LayerToName(layerIndex);
 
-            if (other.CompareTag("PlayerMelee")) {
-                // WeaponDataItem data = LevelManager.Instance._getDataByType("Fists");
-                // damageToApply = (data != null) ? data.WeaponDamage : 0;
-            }
-
-            TakeDamage(damageToApply);
+        Debug.Log(layerIndex + "AAAAAAA " + other +" Damage_____" + layerName); 
+        
+        // if (other.CompareTag("Danger") || other.CompareTag("Enemy") || other.CompareTag("Player")) 
+        if (other.CompareTag("Danger")) 
+        { 
+                int damageToApply = other.GetComponent<HazardZone>().damagePerTick;
+                Debug.Log(damageToApply + "EnemyDamage____Danger" + other);   
+                TakeDamage(damageToApply); 
         }
 
-*/
+        /*   if (other.CompareTag("PlayerProjectile") || other.CompareTag("PlayerMelee"))
+                {
+                    int damageToApply = 0;
+
+                    if (other.CompareTag("PlayerProjectile")) damageToApply = other.GetComponent<Projectile>().currentDamage;
+
+                    if (other.CompareTag("PlayerMelee")) {
+                        // WeaponDataItem data = LevelManager.Instance._getDataByType("Fists");
+                        // damageToApply = (data != null) ? data.WeaponDamage : 0;
+                    }
+
+                    TakeDamage(damageToApply);
+                }
+
+        */
     }
 
-    private void TakeDamage(int damage) {
-        enemyHealth.TakeDamage(damage);
+    private void TakeDamage(int damage) { 
+       // enemyHealth.TakeDamage(damage);
+	   
+	  //  int value = currentHealth - damage;
+		enemyHealthComp.TakeDamage(damage);
+	
     }
 
-    private void UpdateHealth()
+    private void UpdateHealth() 
     {
         if (enemyHealthBar != null)
         {
         	enemyHealthBar.value = enemyCurrentHealth / enemyMaxHealth;  
-           _currentHealthTMP.text = enemyCurrentHealth.ToString() + "/" + enemyMaxHealth.ToString();  
+            _currentHealthTMP.text = enemyCurrentHealth.ToString() + "/" + enemyMaxHealth.ToString();  
         }
     }
 

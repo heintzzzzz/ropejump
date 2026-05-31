@@ -39,6 +39,8 @@ public class CharMovement : CharComponents
         Vector2 movementSpeed = movementNormalized * MoveSpeed;
 
         controller.SetMovement(movementSpeed);
+
+		// гubberCtrl.HandleBlock(); 
     }
 
     protected override void HandleAbility()

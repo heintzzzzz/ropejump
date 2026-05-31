@@ -21,11 +21,17 @@ public class PlayerDamage : MonoBehaviour
         int layerIndex = other.gameObject.layer;
         string layerName = LayerMask.LayerToName(layerIndex);
 
-        Debug.Log(layerIndex + "AAAAAAA Damage_____" + layerName); 
+        // Debug.Log(layerIndex + "AAAAAAA " + other +" Damage_____" + layerName); 
         
-        if (other.CompareTag("Danger") || other.CompareTag("Enemy") || other.CompareTag("Player")) 
+        // if (other.CompareTag("Danger") || other.CompareTag("Enemy") || other.CompareTag("Player")) 
+        if (other.CompareTag("Danger")) 
         {
-            Debug.Log("PlayerDamage____Danger" + other);  
+            if (playerHealth != null)
+            { 
+                int damageToApply = other.GetComponent<HazardZone>().damagePerTick;
+                // Debug.Log(damageToApply + "PlayerDamage____Danger" + other);   
+                playerHealth.TakeDamage(damageToApply); 
+            }
         }
         
         /*if (layerName == "ProjectileDisabled")    
@@ -40,7 +46,7 @@ public class PlayerDamage : MonoBehaviour
         }*/
         
         /*
-        if (layerName == "ProjectileDisabled")    
+        if (layerName == "ProjectileDisabled")     
         {
             if (other.CompareTag("EnemyProjectile"))
             {

@@ -12,7 +12,9 @@ public class CharComponents : MonoBehaviour
     protected CharWeapon charWeapon;
     protected Rigidbody2D rb;
     protected BoxCollider2D boxCollider;
+    protected RubberBandController гubberCtrl;
 
+    
     protected float horizontalInput = 0f;
     protected float verticalInput = 0f;
     public bool isPlayer;
@@ -30,6 +32,8 @@ public class CharComponents : MonoBehaviour
         animator = GetComponent<Animator>();
 
         isPlayer = character.CharacterType == MyLibrary.CharacterTypes.Player;
+
+        гubberCtrl = GetComponent<RubberBandController>();
     }
 
     protected void Update()

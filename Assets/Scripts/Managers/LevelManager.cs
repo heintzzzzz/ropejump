@@ -263,7 +263,7 @@ public class LevelManager : Singleton<LevelManager>
 
     public void UpdateItemAllAmmoAmount(string weaponname, int ammo, int amount)
     {  
-        //UIManager.Instance.UpdateAmmoUI(weaponname, ammo, amount);
+        //UIManager.Instance.UpdateAmmoUI(weaponname, ammo, amount); 
     }
 
     public void UpdateItemWeaponBlock(string weaponname, int ammo, int amount)
@@ -492,7 +492,7 @@ public class LevelManager : Singleton<LevelManager>
         }
     }
 
-    public void ChangeSuperWeapon(string superweaponname) {
+    public void ChangeSuperWeapon(string superweaponname) { 
             /*SuperWeaponDataItem superWeaponData = _getSuperDataByType(superweaponname);
             if(superWeaponData != null) {
                 currentSuperWeapon = superweaponname;
@@ -509,9 +509,9 @@ public class LevelManager : Singleton<LevelManager>
         // UIManager.Instance.SetSuperWeaponValueReloading(superWeaponName, rel_value, rel_amount); // 
     }    
 
-    public void UpdateHealth( float currentHealth, float maxHealth, float currentShield, float maxShield, bool isThisMyPlayer) 
+    public void UpdateHealth( bool isThisMyPlayer, float currentHealth, float maxHealth, float currentShield, float maxShield) 
     {
-       // UIManager.Instance.UpdateHealth(currentHealth, maxHealth, currentShield, maxShield, isThisMyPlayer);
+		if (UIManager.Instance != null) UIManager.Instance.UpdateHealth(isThisMyPlayer, currentHealth, maxHealth, currentShield, maxShield);
     }
 
    public int LoadSuperAmmo(string superWeaponType)

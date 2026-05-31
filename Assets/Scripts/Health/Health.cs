@@ -15,6 +15,9 @@ public class Health : MonoBehaviour
     [Header("Health")]
     [SerializeField] private float initialHealth = 20f;
     [SerializeField] private float maxHealth = 25f;
+
+    [SerializeField] private float initialShield = 20f;
+    [SerializeField] private float maxShield = 25f;
     
     private bool isPlayer;
     
@@ -22,6 +25,7 @@ public class Health : MonoBehaviour
     [SerializeField] private bool destroyObject;
     
     public float CurrentHealth { get; set; }
+    public float CurrentShield { get; set; }
 
     private void Awake()
     {
@@ -34,6 +38,7 @@ public class Health : MonoBehaviour
         spriteRenderer = GetComponentInChildren<SpriteRenderer>();
 
         CurrentHealth = initialHealth;
+        CurrentShield = initialShield;
 
         if (character != null) isPlayer = character.CharacterType == MyLibrary.CharacterTypes.Player;
 
@@ -56,7 +61,10 @@ public class Health : MonoBehaviour
         }
 
         CurrentHealth -= damage;
-        UpdateCharacterHealth();
+
+		Debug.Log(CurrentHealth + "Test___TakeDamage" +  damage); 
+
+        UpdateCharacterHealth(); 
         if (CurrentHealth <= 0)
         {
             Die();
@@ -160,10 +168,12 @@ public class Health : MonoBehaviour
         {
             enemyHealth.UpdateEnemyHealth(CurrentHealth, maxHealth);
         }
-        
-        if (character && isPlayer)
+         
+        if (character && isPlayer) 
         {
-           //  LevelManager.Instance.UpdateHealth(CurrentHealth, maxHealth, isPlayer);
+
+			Debug.Log(isPlayer + "ChEchk this " + CurrentHealth);   
+            LevelManager.Instance.UpdateHealth(isPlayer, CurrentHealth, maxHealth, 0f, 0f);
         }
     }
     

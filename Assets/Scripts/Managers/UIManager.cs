@@ -65,12 +65,14 @@ public class UIManager : Singleton<UIManager>
     [Header("Points")]
     [SerializeField] private TextMeshProUGUI pointsTMP;
 
-    [Header("Weapon Data List")]
-    [SerializeField] public WeaponDataItem pistolData; 
-    [SerializeField] public WeaponDataItem rifleData;
-    [SerializeField] public WeaponDataItem shotgunData;
-    [SerializeField] public WeaponDataItem knifeData;
-    [SerializeField] public WeaponDataItem grenadeData;
+    /*
+        [Header("Weapon Data List")]
+        [SerializeField] public WeaponDataItem pistolData; 
+        [SerializeField] public WeaponDataItem rifleData;
+        [SerializeField] public WeaponDataItem shotgunData;
+        [SerializeField] public WeaponDataItem knifeData;
+        [SerializeField] public WeaponDataItem grenadeData;
+    */
 
     [SerializeField] public bool SpecMode = false;
 
@@ -80,42 +82,44 @@ public class UIManager : Singleton<UIManager>
     protected override void Awake() 
     {
         if (bar != null) { 
-		_rectTransform = bar.GetComponent<RectTransform>();
-        cellHeight = cellWidth / 2;
+		    _rectTransform = bar.GetComponent<RectTransform>();
+            cellHeight = cellWidth / 2;
+            
+            for (var i = 0; i < 9; ++i)
+            {
+                int left = (i == 0) ? cellWidth / 2 : (i * cellWidth) + (cellWidth / 2);
+                int  bottom = cellWidth / 2;
+                Vector3 blockPositionN = new Vector3(_rectTransform.anchoredPosition.x + left, _rectTransform.anchoredPosition.y + bottom); 
+                /* var wSlot = Instantiate(wb, blockPositionN, Quaternion.identity);   
+                wSlot.transform.SetParent(bar.transform);  
+                _weaponSlotList.Add(wSlot); */
+            }
         
-        for (var i = 0; i < 9; ++i)
-        {
-            int left = (i == 0) ? cellWidth / 2 : (i * cellWidth) + (cellWidth / 2);
-            int  bottom = cellWidth / 2;
-            Vector3 blockPositionN = new Vector3(_rectTransform.anchoredPosition.x + left, _rectTransform.anchoredPosition.y + bottom); 
-            var wSlot = Instantiate(wb, blockPositionN, Quaternion.identity);   
-            wSlot.transform.SetParent(bar.transform);  
-            _weaponSlotList.Add(wSlot);
-        }
-        
-        // TODO spec things
-        Vector3 itemPosition = new Vector3(_rectTransform.anchoredPosition.x + 50, _rectTransform.anchoredPosition.y + 150);
-        Vector3 superPosition = new Vector3(_rectTransform.anchoredPosition.x + 150, _rectTransform.anchoredPosition.y + 150);
+            // TODO spec things
+/*
+            Vector3 itemPosition = new Vector3(_rectTransform.anchoredPosition.x + 50, _rectTransform.anchoredPosition.y + 150);
+            Vector3 superPosition = new Vector3(_rectTransform.anchoredPosition.x + 150, _rectTransform.anchoredPosition.y + 150);
 
-        // TODO make special weapon bar and items bar
-        itemSlot = Instantiate(itemBlock, itemPosition, Quaternion.identity); 
-        superSlot = Instantiate(superBlock, superPosition, Quaternion.identity); 
+            // TODO make special weapon bar and items bar
+            itemSlot = Instantiate(itemBlock, itemPosition, Quaternion.identity); 
+            superSlot = Instantiate(superBlock, superPosition, Quaternion.identity); 
 
-        itemSlot.transform.SetParent(bar.transform);
-        superSlot.transform.SetParent(bar.transform);
+            itemSlot.transform.SetParent(bar.transform);
+            superSlot.transform.SetParent(bar.transform);
 
-        string firstWeaponEquiped = LevelManager.Instance.currentItem;
-        SetWeaponBlockItem(firstWeaponEquiped);
-        ChangeActive(firstWeaponEquiped, true);
+            string firstWeaponEquiped = LevelManager.Instance.currentItem;
+            SetWeaponBlockItem(firstWeaponEquiped);
+            ChangeActive(firstWeaponEquiped, true);
 
-        _superFieldRect = supField.GetComponent<RectTransform>();
+            _superFieldRect = supField.GetComponent<RectTransform>();
 
-        for(int i = 0; i < currentSuperAmount; i++) 
-        {
-            Vector3 shPos = new Vector3(supField.transform.position.x + (((i == 0) ? 14 : 14) + (i * 26)), supField.transform.position.y); 
-            GameObject sbSlot = Instantiate(sb, shPos, Quaternion.identity); 
-            sbSlot.transform.SetParent(supField.transform); 
-        }
+            for(int i = 0; i < currentSuperAmount; i++) 
+            {
+                Vector3 shPos = new Vector3(supField.transform.position.x + (((i == 0) ? 14 : 14) + (i * 26)), supField.transform.position.y); 
+                GameObject sbSlot = Instantiate(sb, shPos, Quaternion.identity); 
+                sbSlot.transform.SetParent(supField.transform); 
+            } 
+*/
 		}
     }  
 
@@ -204,7 +208,7 @@ public class UIManager : Singleton<UIManager>
 
             if (isPlayer) {
                 healthBar.fillAmount = Mathf.Lerp(healthBar.fillAmount, playerCurrentHealth / playerMaxHealth, 10f * Time.deltaTime);
-                currentHealthTMP.text = playerCurrentHealth.ToString() + "/" + playerMaxHealth.ToString();
+                currentHealthTMP.text = playerCurrentHealth.ToString() + "/" + playerMaxHealth.ToString(); 
                 
                 /* Shield things */
                 float thisValue = 0.1f;
@@ -216,8 +220,8 @@ public class UIManager : Singleton<UIManager>
 
                 if (thisValue > 1f) thisValue = 1f;
 
-                shieldBar.fillAmount = Mathf.Lerp(shieldBar.fillAmount, thisValue, 10f * Time.deltaTime);
-                currentShieldTMP.text = playerCurrentShield.ToString() + "/" + playerMaxShield.ToString();
+                // shieldBar.fillAmount = Mathf.Lerp(shieldBar.fillAmount, thisValue, 10f * Time.deltaTime);
+                // currentShieldTMP.text = playerCurrentShield.ToString() + "/" + playerMaxShield.ToString();
 
                 // Set reloading super weapon
                 /*if (_currentSuperWeapon != "") {
@@ -248,10 +252,10 @@ public class UIManager : Singleton<UIManager>
         return playerCurrentAmmo;
     }
 
-    public void UpdateHealth( float currentHealth, float maxHealth, float currentShield, float maxShield, bool isThisMyPlayer)
+    public void UpdateHealth(bool isThisMyPlayer, float currentHealth, float maxHealth, float currentShield, float maxShield)
     {
         playerCurrentHealth = currentHealth;
-        playerMaxHealth = maxHealth;
+        playerMaxHealth = maxHealth; 
         playerCurrentShield = currentShield;
         playerMaxShield = maxShield;
         isPlayer = isThisMyPlayer;
