@@ -46,26 +46,4 @@ public class MeleeWeapon : Weapon
         _boxCollider2D.enabled = true;
         _isAttacking = false;
     }
-    
-    /*private IEnumerator Attack2()
-    {
-        if (_isAttacking == true) yield break;
-
-        _boxCollider2D.enabled = false;
-        _isAttacking = true;
-        
-        // animator.SetTrigger("UseMeeleWeapon");  
-        float faceingRight = WeaponOwner.GetComponent<CharFlip>().FacingRight ? 1 : -1;
-
-        Debug.Log("Attack_____" + animator);  
-        
-            // animator.SetFloat("FaceRight", faceingRight);
-        // animator.SetTrigger(useMeeleWeapon);  
-        animator.SetTrigger("test");    
-
-        yield return new WaitForSeconds(attackDelay);
-
-        _boxCollider2D.enabled = true;
-        _isAttacking = false;
-    }*/
 }

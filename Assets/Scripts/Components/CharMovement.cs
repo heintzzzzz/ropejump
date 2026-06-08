@@ -33,6 +33,25 @@ public class CharMovement : CharComponents
 
     private void MoveChar()
     {
+        Vector2 movement = new Vector2(horizontalInput, verticalInput);
+        Vector2 moveInput = movement; 
+        Vector2 movementNormalized = moveInput.normalized;
+        Vector2 movementSpeed = movementNormalized * MoveSpeed;
+        
+        controller.SetMovement(movementSpeed);
+
+        /*float timeBtwTrace = 0.1f;
+
+        if (Time.time > nextResTime && (horizontalInput > 0 || verticalInput > 0 || horizontalInput < 0 || verticalInput < 0))
+        {
+            Vector2 pos = new Vector2(character.transform.position.x, character.transform.position.y); 
+            nextResTime = Time.time + timeBtwTrace;
+        }*/
+        
+    }
+    
+    /*private void MoveChar()
+    {
         Vector2 movement = new Vector2(horizontalInput, 0f);
         Vector2 moveInput = movement;
         Vector2 movementNormalized = moveInput.normalized;
@@ -41,7 +60,7 @@ public class CharMovement : CharComponents
         controller.SetMovement(movementSpeed);
 
 		// гubberCtrl.HandleBlock(); 
-    }
+    }*/
 
     protected override void HandleAbility()
     {

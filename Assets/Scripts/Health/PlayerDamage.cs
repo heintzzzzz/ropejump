@@ -26,7 +26,7 @@ public class PlayerDamage : MonoBehaviour
             if (playerHealth != null)
             { 
                 int damageToApply = other.GetComponent<HazardZone>().damagePerTick;
-                playerHealth.TakeDamage(damageToApply); 
+                // playerHealth.TakeDamage(damageToApply);  
             }
         }
         

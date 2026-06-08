@@ -232,7 +232,7 @@ public class HazardZone : MonoBehaviour
         targetsInside[health] = 0f;
 
         // Мгновенный урон при входе
-        // if (entryDamage > 0) DealDamage(health, entryDamage); 
+        if (entryDamage > 0) DealDamage(health, entryDamage); 
 
         // Частицы входа
         if (entryParticlesPrefab != null)
@@ -314,7 +314,7 @@ public class HazardZone : MonoBehaviour
             if (targetsInside[health] >= tickInterval)
             {
                 targetsInside[health] = 0f;
-                // DealDamage(health, damagePerTick);
+                DealDamage(health, damagePerTick);
                 PlayTickEffects(health.transform.position);
             }
         }
@@ -322,7 +322,9 @@ public class HazardZone : MonoBehaviour
 
     private void DealDamage(Health health, int amount)
     {
-        // health.TakeDamage(amount);
+        Debug.Log("DealDamage" + amount); 
+        
+        health.TakeDamage(amount);
         onDamageDealt?.Invoke(health.gameObject, amount);
     }
 

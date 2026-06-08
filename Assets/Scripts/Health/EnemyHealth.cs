@@ -31,7 +31,6 @@ public class EnemyHealth : MonoBehaviour
             {
                 enemyHealthComp.SetHealthData(enemyCurrentHealth, enemyMaxHealth, false);
             }
-
         } 
         
         if (enemyHealthBarPrefub != null)
@@ -58,19 +57,19 @@ public class EnemyHealth : MonoBehaviour
         int layerIndex = other.gameObject.layer;
         string layerName = LayerMask.LayerToName(layerIndex);
 
-        Debug.Log(layerIndex + "AAAAAAA " + other +" Damage_____" + layerName); 
+        // Debug.Log(layerIndex + "AAAAAAA " + other +" Damage_____" + layerName); 
         
         // if (other.CompareTag("Danger") || other.CompareTag("Enemy") || other.CompareTag("Player")) 
         
-/*
+
 		if (other.CompareTag("Danger")) 
         { 
                 int damageToApply = other.GetComponent<HazardZone>().damagePerTick;
-                Debug.Log(damageToApply + "EnemyDamage____Danger" + other);   
-                TakeDamage(damageToApply); 
-				return; 
+                // Debug.Log(damageToApply + "EnemyDamage____Danger" + other);   
+                // TakeDamage(damageToApply); 
+				// return; 
         }
-*/  
+ 
 
         /*   if (other.CompareTag("PlayerProjectile") || other.CompareTag("PlayerMelee"))
                 {
@@ -92,8 +91,8 @@ public class EnemyHealth : MonoBehaviour
     private void TakeDamage(int damage) { 
        // enemyHealth.TakeDamage(damage);
 	   
-	  //  int value = currentHealth - damage;
-		enemyHealthComp.TakeDamage(damage);
+	   //  int value = currentHealth - damage;
+	   // enemyHealthComp.TakeDamage(damage);
 	
     }
 
