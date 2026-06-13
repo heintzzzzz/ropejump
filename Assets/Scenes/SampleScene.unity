@@ -186,7 +186,7 @@ SpriteRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_Sprite: {fileID: 1288134695594566189, guid: 73c1f93a6196685569899bf82a9d6b2a, type: 3}
-  m_Color: {r: 0.98678964, g: 0, b: 0, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -464,7 +464,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0.16832352, y: 0}
+  m_Offset: {x: 0.009492256, y: 0}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -474,7 +474,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 1.3946009, y: 1.125}
+  m_Size: {x: 0.2963962, y: 1.125}
   m_EdgeRadius: 0
 --- !u!212 &384421243
 SpriteRenderer:
@@ -544,7 +544,7 @@ Transform:
   m_GameObject: {fileID: 384421239}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
-  m_LocalPosition: {x: -0.71, y: -13.5, z: 0}
+  m_LocalPosition: {x: -0.47, y: -13.4, z: 0}
   m_LocalScale: {x: 1.2243, y: 3, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -937,7 +937,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RubberBandController
   pointA: {fileID: 1676332924}
   pointB: {fileID: 1689302025}
-  travelSpeed: 15
+  travelSpeed: 5
   horizontalSpeed: 5
   overshootPercent: 0.1
   overshootSpeedMultiplier: 0.6
@@ -1864,7 +1864,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RubberBandController
   pointA: {fileID: 145340059}
   pointB: {fileID: 967891222}
-  travelSpeed: 15
+  travelSpeed: 5
   horizontalSpeed: 5
   overshootPercent: 0.1
   overshootSpeedMultiplier: 0.6

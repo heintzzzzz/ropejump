@@ -235,16 +235,13 @@ public class HazardZone : MonoBehaviour
         if (entryDamage > 0) DealDamage(health, entryDamage); 
 
         // Частицы входа
-        if (entryParticlesPrefab != null)
-            Instantiate(entryParticlesPrefab, other.transform.position, Quaternion.identity);
+        if (entryParticlesPrefab != null) Instantiate(entryParticlesPrefab, other.transform.position, Quaternion.identity);
 
         // Knockback
-        if (applyKnockback)
-            ApplyKnockback(other.attachedRigidbody);
+        if (applyKnockback) ApplyKnockback(other.attachedRigidbody);
 
         // Замедление
-        if (applySlowInside)
-            ApplySlow(other.gameObject, slowMultiplier);
+        if (applySlowInside) ApplySlow(other.gameObject, slowMultiplier);
 
         onPlayerEnter?.Invoke(other.gameObject);
     }
@@ -259,12 +256,10 @@ public class HazardZone : MonoBehaviour
         targetsInside.Remove(health);
 
         // Снять замедление
-        if (applySlowInside)
-            RemoveSlow(other.gameObject);
+        if (applySlowInside) RemoveSlow(other.gameObject);
 
         // Статус-эффект после выхода
-        if (applyStatusOnExit)
-            StartCoroutine(ApplyStatusEffect(health, statusDuration, statusDamagePerSecond));
+        if (applyStatusOnExit) StartCoroutine(ApplyStatusEffect(health, statusDuration, statusDamagePerSecond));
 
         onPlayerExit?.Invoke(other.gameObject);
     }
@@ -314,7 +309,7 @@ public class HazardZone : MonoBehaviour
             if (targetsInside[health] >= tickInterval)
             {
                 targetsInside[health] = 0f;
-                DealDamage(health, damagePerTick);
+                // DealDamage(health, damagePerTick);
                 PlayTickEffects(health.transform.position);
             }
         }
