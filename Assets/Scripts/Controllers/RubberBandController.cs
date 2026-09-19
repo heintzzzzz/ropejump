@@ -21,11 +21,8 @@ public class RubberBandController : MonoBehaviour
  
     [Header("Fall / Ascent")]
     [Tooltip("Base speed of the fall / ascent along the Y axis (units per second).")]
-    public float travelSpeed = 8f;
- 
-    [Tooltip("Horizontal movement speed while falling or ascending.")]
-    public float horizontalSpeed = 5f;
- 
+    public float travelSpeed = 13f;
+
     [Header("Inertia Overshoot")]
     [Tooltip("Overshoot percentage at both bounce points (0.10 = 10 %).")]
     [Range(0f, 0.5f)]
@@ -40,12 +37,12 @@ public class RubberBandController : MonoBehaviour
  
     [Tooltip("Seconds the player lingers at the top point.")]
     public float topDelay = 5f;
- 
-    [Header("Bottom-Delay Penalty")]
-    [Tooltip("Movement speed multiplier while in the bottom delay phase.")]
+
+    [Header("Boundary Penalty")]
+    [Tooltip("Horizontal speed multiplier while hovering at a top/bottom extreme point (0 = fully blocked, 1 = no penalty).")]
     [Range(0f, 1f)]
-    public float bottomSlowMultiplier = 0.5f;
- 
+    public float boundaryHorizontalMultiplier = 1f / 3f;
+
     // ─────────────────────────────────────────────
     //  Public State (read from other scripts)
     // ─────────────────────────────────────────────
@@ -65,17 +62,34 @@ public class RubberBandController : MonoBehaviour
  
     /// <summary>True when the player is allowed to attack.</summary>
     public bool CanAttack => CurrentPhase != Phase.BottomDelay && CurrentPhase != Phase.Idle;
- 
-    /// <summary>Current horizontal speed modifier exposed for UI / other systems.</summary>
-    public float CurrentHorizontalMultiplier { get; private set; } = 1f;
- 
+
+    /// <summary>
+    /// Horizontal speed multiplier for the current phase: full speed while actively
+    /// falling/ascending (including overshoot) or before the cycle starts; reduced to
+    /// <see cref="boundaryHorizontalMultiplier"/> while hovering at a top/bottom extreme
+    /// point. The Character Controller reads this to scale horizontal movement.
+    /// </summary>
+    public float HorizontalSpeedMultiplier =>
+        (CurrentPhase == Phase.BottomDelay || CurrentPhase == Phase.TopDelay)
+            ? boundaryHorizontalMultiplier
+            : 1f;
+
+    /// <summary>
+    /// The Y position the cycle currently wants the character at. CharController reads
+    /// this every FixedUpdate and combines it with horizontal input into a single
+    /// MovePosition call, so vertical travel and horizontal input never fight over the
+    /// Rigidbody2D (MovePosition calls don't stack - the last one before a physics step
+    /// wins - so only one script may call it).
+    /// </summary>
+    public float TargetY { get; private set; }
+
     // ─────────────────────────────────────────────
     //  Private State
     // ─────────────────────────────────────────────
  
     private Rigidbody2D rb;
     private float stretchLength;   // distance A → B
-    private float overshootDist;   // stretchLength * overshootPercent
+    private float overshootDist;   // stretchLength * overshooftPercent
     private float yBottom;         // pointB.y
     private float yTop;            // pointA.y
     private float yBottomOver;     // yBottom  - overshootDist
@@ -91,8 +105,9 @@ public class RubberBandController : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         rb.gravityScale = 0f; // We drive movement manually
+        TargetY = rb.position.y;
     }
- 
+
     private void Start()
     {
         // Cache geometry once
@@ -102,12 +117,6 @@ public class RubberBandController : MonoBehaviour
         overshootDist = stretchLength * overshootPercent;
         yBottomOver   = yBottom - overshootDist;
         yTopOver      = yTop    + overshootDist;
-    }
- 
-    private void Update()
-    {
-        if (!cycleActive) return; 
-		//HandleHorizontalInput();
     }
  
     // ─────────────────────────────────────────────
@@ -120,7 +129,8 @@ public class RubberBandController : MonoBehaviour
     public void StartCycle()
     {
         if (cycleActive) return;
-        transform.position = new Vector3(transform.position.x, yTop, transform.position.z);
+        rb.position = new Vector2(rb.position.x, yTop);
+        TargetY = yTop;
         cycleActive = true;
         StartCoroutine(RunCycle());
     }
@@ -134,7 +144,6 @@ public class RubberBandController : MonoBehaviour
         StopAllCoroutines();
         CurrentPhase = Phase.Idle;
         rb.linearVelocity = Vector2.zero;
-        CurrentHorizontalMultiplier = 1f;
     }
  
     // ─────────────────────────────────────────────
@@ -152,8 +161,8 @@ public class RubberBandController : MonoBehaviour
             yield return StartCoroutine(TravelVertical(yBottomOver, Phase.BottomOvershoot, overshootSpeedMultiplier));
  
             // 3. BOTTOM DELAY at the extreme low point (B - 10%)
-            //    Slow movement, no attack allowed.
-            yield return StartCoroutine(DelayPhase(bottomDelay, Phase.BottomDelay, bottomSlowMultiplier));
+            //    Hovering: horizontal speed is reduced (boundaryHorizontalMultiplier), attacking is disabled.
+            yield return StartCoroutine(DelayPhase(bottomDelay, Phase.BottomDelay));
  
             // 4. RETURN from extreme low back to B
             yield return StartCoroutine(TravelVertical(yBottom, Phase.BottomOvershoot, overshootSpeedMultiplier));
@@ -165,8 +174,8 @@ public class RubberBandController : MonoBehaviour
             yield return StartCoroutine(TravelVertical(yTopOver, Phase.TopOvershoot, overshootSpeedMultiplier));
  
             // 7. TOP DELAY at the extreme high point (A + 10%)
-            //    Full speed, can attack.
-            yield return StartCoroutine(DelayPhase(topDelay, Phase.TopDelay, 1f));
+            //    Hovering: horizontal speed is reduced (boundaryHorizontalMultiplier), attacking is allowed.
+            yield return StartCoroutine(DelayPhase(topDelay, Phase.TopDelay));
  
             // 8. RETURN from extreme high back to A
             yield return StartCoroutine(TravelVertical(yTop, Phase.TopOvershoot, overshootSpeedMultiplier));
@@ -175,7 +184,7 @@ public class RubberBandController : MonoBehaviour
  
     // ─────────────────────────────────────────────
     //  Helpers
-    // ─────────────────────────────────────────────
+    // ───────────────────────────────────────────── ///////
  
     /// <summary>
     /// Smoothly moves the character to targetY along the vertical axis.
@@ -183,34 +192,28 @@ public class RubberBandController : MonoBehaviour
     private IEnumerator TravelVertical(float targetY, Phase phase, float speedMult = 1f)
     {
         CurrentPhase = phase;
-        CurrentHorizontalMultiplier = 1f;
- 
+
         float speed = travelSpeed * speedMult;
  
         while (cycleActive)
         {
-            float currentY = transform.position.y;
             float step = speed * Time.deltaTime;
-            float newY = Mathf.MoveTowards(currentY, targetY, step);
- 
-            // Keep X unchanged (horizontal input handled in Update via rb)
-            transform.position = new Vector3(transform.position.x, newY, transform.position.z);
- 
-            if (Mathf.Approximately(newY, targetY))
+            TargetY = Mathf.MoveTowards(TargetY, targetY, step);
+
+            if (Mathf.Approximately(TargetY, targetY))
                 break;
- 
+
             yield return null;
         }
     }
  
     /// <summary>
-    /// Holds position for <duration> seconds, applying a movement multiplier.
+    /// Holds position for <duration> seconds while hovering at an extreme point.
     /// </summary>
-    private IEnumerator DelayPhase(float duration, Phase phase, float hMultiplier)
+    private IEnumerator DelayPhase(float duration, Phase phase)
     {
         CurrentPhase = phase;
-        CurrentHorizontalMultiplier = hMultiplier;
- 
+
         float elapsed = 0f;
         while (elapsed < duration && cycleActive)
         {
@@ -218,21 +221,4 @@ public class RubberBandController : MonoBehaviour
             yield return null;
         }
     }
- 
-    /// <summary>
-    /// Reads horizontal axis input and moves the character accordingly.
-    /// Respects the current horizontal multiplier.
-    /// </summary>
-    private void HandleHorizontalInput()
-    {
-        // float h = Input.GetAxisRaw("Horizontal");
-        // float speed = horizontalSpeed * CurrentHorizontalMultiplier;
-        // Vector2 vel = rb.linearVelocity;
-        // vel.x = h * speed;
-        // rb.linearVelocity = vel; 
-    }
-
-	public void HandleBlock() {
-		// Debug.Log("STOPPPPPPPPPPPPPPPPPPPP");
-	}
 }

@@ -180,8 +180,8 @@ public class HazardZone : MonoBehaviour
     private bool isActive = false;
     private bool isFlashing = false;
 
-    // Список игроков внутри зоны + их таймеры тиков
-    private Dictionary<Health, float> targetsInside = new Dictionary<Health, float>();
+    // Список целей внутри зоны + их таймеры тиков
+    private Dictionary<HealthComponent, float> targetsInside = new Dictionary<HealthComponent, float>();
 
     // ─────────────────────────────────────────────────────────────
     //  Unity Messages
@@ -218,7 +218,8 @@ public class HazardZone : MonoBehaviour
         if (pulseWhenActive && sr != null && !isFlashing)
             AnimatePulse();
 
-        if (continuousShake) AnimateShake();
+        if (continuousShake)
+            AnimateShake();
     }
 
     private void OnTriggerEnter2D(Collider2D other)
@@ -226,22 +227,26 @@ public class HazardZone : MonoBehaviour
         if (!isActive) return;
         if (!IsTargetLayer(other.gameObject)) return;
 
-        var health = other.GetComponent<Health>();
+        var health = other.GetComponent<HealthComponent>();
         if (health == null || targetsInside.ContainsKey(health)) return;
 
         targetsInside[health] = 0f;
 
         // Мгновенный урон при входе
-        if (entryDamage > 0) DealDamage(health, entryDamage); 
+        if (entryDamage > 0)
+            DealDamage(health, entryDamage);
 
         // Частицы входа
-        if (entryParticlesPrefab != null) Instantiate(entryParticlesPrefab, other.transform.position, Quaternion.identity);
+        if (entryParticlesPrefab != null)
+            Instantiate(entryParticlesPrefab, other.transform.position, Quaternion.identity);
 
         // Knockback
-        if (applyKnockback) ApplyKnockback(other.attachedRigidbody);
+        if (applyKnockback)
+            ApplyKnockback(other.attachedRigidbody);
 
         // Замедление
-        if (applySlowInside) ApplySlow(other.gameObject, slowMultiplier);
+        if (applySlowInside)
+            ApplySlow(other.gameObject, slowMultiplier);
 
         onPlayerEnter?.Invoke(other.gameObject);
     }
@@ -250,16 +255,30 @@ public class HazardZone : MonoBehaviour
     {
         if (!IsTargetLayer(other.gameObject)) return;
 
-        var health = other.GetComponent<Health>();
+        var health = other.GetComponent<HealthComponent>();
         if (health == null || !targetsInside.ContainsKey(health)) return;
 
         targetsInside.Remove(health);
 
         // Снять замедление
-        if (applySlowInside) RemoveSlow(other.gameObject);
+        if (applySlowInside)
+            RemoveSlow(other.gameObject);
 
-        // Статус-эффект после выхода
-        if (applyStatusOnExit) StartCoroutine(ApplyStatusEffect(health, statusDuration, statusDamagePerSecond));
+        // Статус-эффект через компонент StatusEffectDoT
+        if (applyStatusOnExit)
+        {
+            var dot = health.GetComponent<StatusEffectDoT>();
+            if (dot != null)
+                dot.Refresh(statusDuration);    // обновить если уже горит
+            else
+            {
+                dot = health.gameObject.AddComponent<StatusEffectDoT>();
+                dot.damageType = HazardTypeToDamageType();
+                dot.dps        = statusDamagePerSecond;
+                dot.duration   = statusDuration;
+                dot.source     = gameObject;
+            }
+        }
 
         onPlayerExit?.Invoke(other.gameObject);
     }
@@ -295,10 +314,9 @@ public class HazardZone : MonoBehaviour
     //  Тиковый урон
     // ─────────────────────────────────────────────────────────────
 
-    private void TickDamageAll() 
+    private void TickDamageAll()
     {
-        // Копируем ключи чтобы безопасно итерировать
-        var keys = new List<Health>(targetsInside.Keys);
+        var keys = new List<HealthComponent>(targetsInside.Keys);
 
         foreach (var health in keys)
         {
@@ -309,19 +327,26 @@ public class HazardZone : MonoBehaviour
             if (targetsInside[health] >= tickInterval)
             {
                 targetsInside[health] = 0f;
-                // DealDamage(health, damagePerTick);
+                DealDamage(health, damagePerTick);
                 PlayTickEffects(health.transform.position);
             }
         }
     }
 
-    private void DealDamage(Health health, int amount)
+    private void DealDamage(HealthComponent health, int amount)
     {
-        Debug.Log("DealDamage" + amount); 
-        
-        health.TakeDamage(amount);
+        var info = new DamageInfo(amount, HazardTypeToDamageType(), gameObject);
+        health.TakeDamage(info);
         onDamageDealt?.Invoke(health.gameObject, amount);
     }
+
+    private DamageType HazardTypeToDamageType() => hazardType switch
+    {
+        HazardType.Fire  => DamageType.Fire,
+        HazardType.Acid  => DamageType.Acid,
+        HazardType.Blade => DamageType.Blade,
+        _                => DamageType.Physical,
+    };
 
     // ─────────────────────────────────────────────────────────────
     //  Визуальные эффекты
@@ -431,29 +456,8 @@ public class HazardZone : MonoBehaviour
         }
     }
 
-    // ─────────────────────────────────────────────────────────────
-    //  Статус-эффект (DoT вне зоны)
-    // ─────────────────────────────────────────────────────────────
-
-    private IEnumerator ApplyStatusEffect(Health health, float duration, float dps)
-    {
-        float elapsed = 0f;
-        float acc = 0f;
-        while (elapsed < duration)
-        {
-            if (health == null) yield break;
-            elapsed += Time.deltaTime;
-            acc     += Time.deltaTime;
-
-            // Наносим урон раз в секунду
-            if (acc >= 1f)
-            {
-                acc -= 1f;
-                // health.TakeDamage(Mathf.RoundToInt(dps));
-            }
-            yield return null;
-        }
-    }
+    // Статус-эффект теперь реализован через компонент StatusEffectDoT (см. DamageSystem.cs).
+    // HazardZone добавляет его в OnTriggerExit2D и вызывает Refresh() если эффект уже активен.
 
     // ─────────────────────────────────────────────────────────────
     //  Knockback
@@ -464,13 +468,14 @@ public class HazardZone : MonoBehaviour
         if (targetRb == null) return;
         Vector2 dir = ((Vector2)targetRb.transform.position - (Vector2)transform.position).normalized;
         if (dir == Vector2.zero) dir = Vector2.up;
+        // Knockback при входе — напрямую через Rigidbody2D (до TakeDamage уже применён в DealDamage)
         targetRb.AddForce(dir * knockbackForce, ForceMode2D.Impulse);
     }
 
     // ─────────────────────────────────────────────────────────────
     //  Замедление
     //  Использует простой компонент SlowEffect чтобы не ломать
-    //  RubberBandController.horizontalSpeed напрямую.
+    //  CharMovement.MoveSpeed напрямую.
     // ─────────────────────────────────────────────────────────────
 
     private void ApplySlow(GameObject target, float multiplier)

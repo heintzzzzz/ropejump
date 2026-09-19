@@ -8,11 +8,8 @@ public class CharMovement : CharComponents
     public float MoveSpeed { get; set; }
     private readonly int movingParamater = Animator.StringToHash("Moving");
 
-    private CharFlip charFlip; 
-    private RubberBandController rbCont; 
-    
-    
-    
+    private CharFlip charFlip;
+
     [Header("Damage")]
     private bool isInjured = false;
     private bool isFallen = false;
@@ -21,9 +18,8 @@ public class CharMovement : CharComponents
     protected override void Start() 
     {
         base.Start();
-        charFlip = character.GetComponent<CharFlip>(); 
-        // rbCont = character.GetComponent<RubberBandController>(); 
-        MoveSpeed = walkSpeed; 
+        charFlip = character.GetComponent<CharFlip>();
+        MoveSpeed = walkSpeed;
         
         if (!isPlayer)
         {
@@ -33,43 +29,19 @@ public class CharMovement : CharComponents
 
     private void MoveChar()
     {
-        Vector2 movement = new Vector2(horizontalInput, verticalInput);
-        Vector2 moveInput = movement; 
-        Vector2 movementNormalized = moveInput.normalized;
-        Vector2 movementSpeed = movementNormalized * MoveSpeed;
-        
+        // Vertical position is driven entirely by the RubberBandController cycle.
+        // Horizontal speed is scaled down while hovering at a top/bottom extreme point.
+        float horizontalMultiplier = гubberCtrl != null ? гubberCtrl.HorizontalSpeedMultiplier : 1f;
+
+        Vector2 movementSpeed = new Vector2(horizontalInput * horizontalMultiplier, 0f) * MoveSpeed;
+
         controller.SetMovement(movementSpeed);
-
-        /*float timeBtwTrace = 0.1f;
-
-        if (Time.time > nextResTime && (horizontalInput > 0 || verticalInput > 0 || horizontalInput < 0 || verticalInput < 0))
-        {
-            Vector2 pos = new Vector2(character.transform.position.x, character.transform.position.y); 
-            nextResTime = Time.time + timeBtwTrace;
-        }*/
-        
     }
-    
-    /*private void MoveChar()
-    {
-        Vector2 movement = new Vector2(horizontalInput, 0f);
-        Vector2 moveInput = movement;
-        Vector2 movementNormalized = moveInput.normalized;
-        Vector2 movementSpeed = movementNormalized * MoveSpeed;
-
-        controller.SetMovement(movementSpeed);
-
-		// гubberCtrl.HandleBlock(); 
-    }*/
 
     protected override void HandleAbility()
     {
         base.HandleAbility();
-        
-        if (isPlayer)
-        {
-            MoveChar();
-        }
+        MoveChar();
     }
 
     private void UpdateAnimations()

@@ -752,6 +752,8 @@ GameObject:
   - component: {fileID: 589018761}
   - component: {fileID: 589018762}
   - component: {fileID: 589018763}
+  - component: {fileID: 589018764}
+  - component: {fileID: 589018765}
   m_Layer: 19
   m_Name: Enemy
   m_TagString: Enemy
@@ -951,7 +953,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 589018752}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 09c22330403f1ef3f9e46039556bc395, type: 3}
   m_Name: 
@@ -961,6 +963,50 @@ MonoBehaviour:
   initialShield: 50
   maxShield: 50
   destroyObject: 0
+--- !u!114 &589018764
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 589018752}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 371a763d256298fd4a1dbad51ce82120, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HealthComponent
+  maxHealth: 100
+  currentHealth: 0
+  immunities: 
+  resistances: []
+  invincibilityDuration: 0
+  onDamaged:
+    m_PersistentCalls:
+      m_Calls: []
+  onHealthChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  onDeath:
+    m_PersistentCalls:
+      m_Calls: []
+  onHealed:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!114 &589018765
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 589018752}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b59a2c5a0f597d35caf4d775a641145b, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::CharMovement
+  animator: {fileID: 0}
+  isPlayer: 0
+  walkSpeed: 2
 --- !u!1 &601606678
 GameObject:
   m_ObjectHideFlags: 0
@@ -1680,6 +1726,7 @@ GameObject:
   - component: {fileID: 1414879395}
   - component: {fileID: 1414879394}
   - component: {fileID: 1414879396}
+  - component: {fileID: 1414879397}
   m_Layer: 20
   m_Name: Player
   m_TagString: Player
@@ -1900,6 +1947,35 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e4748fbc6e4f1bbf9b9246a5e72b656e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerDamage
+--- !u!114 &1414879397
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1414879385}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 371a763d256298fd4a1dbad51ce82120, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HealthComponent
+  maxHealth: 100
+  currentHealth: 0
+  immunities: 
+  resistances: []
+  invincibilityDuration: 0
+  onDamaged:
+    m_PersistentCalls:
+      m_Calls: []
+  onHealthChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  onDeath:
+    m_PersistentCalls:
+      m_Calls: []
+  onHealed:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &1424288349
 GameObject:
   m_ObjectHideFlags: 0

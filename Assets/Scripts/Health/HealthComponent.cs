@@ -59,8 +59,8 @@ public class HealthComponent : MonoBehaviour, IDamageable
         // Knockback
         if (info.KnockbackForce > 0f)
         {
-            var rb = GetComponent<Rigidbody2D>();
-            if (rb != null) rb.AddForce(info.KnockbackDir * info.KnockbackForce, ForceMode2D.Impulse);
+          //   var rb = GetComponent<Rigidbody2D>();
+          //   if (rb != null) rb.AddForce(info.KnockbackDir * info.KnockbackForce, ForceMode2D.Impulse);
         }
 
         onDamaged?.Invoke(info); 
