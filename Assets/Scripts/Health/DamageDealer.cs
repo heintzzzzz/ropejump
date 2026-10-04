@@ -29,33 +29,56 @@ public class DamageDealer : MonoBehaviour
     [Header("Behaviout")] [Tooltip("Destroy object after the 1st collisioon (projectile).")]
     public bool destroyOnHit = false;
 
-    [Tooltip("Deael damage only one tile on enter trigger (do not repeat")]
+    [Tooltip("Hit each target only once until ResetHit() or re-enable (one swing / one projectile life).")]
     public bool hitOnce = true;
 
     [Tooltip("Target layers.")] public LayerMask targetLayers;
 
-    private bool alreadyHit = false;
+    [Header("Effects")]
+    [Tooltip("Spawned at the hit point.")]
+    public ParticleSystem hitEffect;
+
+    // владелец (персонаж с оружием) — его не бьём
+    private GameObject owner;
+
+    // цели, уже получившие урон в текущей атаке
+    private readonly HashSet<IDamageable> hitTargets = new HashSet<IDamageable>();
+
+    // объект из пула или снова включённое оружие начинает с чистого списка
+    private void OnEnable() => ResetHit();
+
+    // Настройка из данных оружия. Пустые targetLayers / hitEffect не перезаписывают значения из инспектора.
+    public void Configure(int newDamage, DamageType newType, float newKnockback,
+                          LayerMask newTargetLayers, ParticleSystem newHitEffect, GameObject newOwner)
+    {
+        damage = newDamage;
+        damageType = newType;
+        knockbackForce = newKnockback;
+        if (newTargetLayers.value != 0) targetLayers = newTargetLayers;
+        if (newHitEffect != null) hitEffect = newHitEffect;
+        owner = newOwner;
+    }
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (hitOnce && alreadyHit) return;
-       if ((targetLayers.value & (1 << other.gameObject.layer)) == 0) return; 
+        if ((targetLayers.value & (1 << other.gameObject.layer)) == 0) return;
+        if (owner != null && other.transform.IsChildOf(owner.transform)) return;
 
-        var target = other.GetComponent<IDamageable>();
-        if (target == null) return;
+        if (!other.TryGetComponent<IDamageable>(out var target)) return;
+        if (hitOnce && hitTargets.Contains(target)) return;
 
-        Vector2 knockDir = ((Vector2)other.transform.position - (Vector2)transform.position).normalized; 
-        var info = new DamageInfo(damage, damageType, gameObject, knockDir, knockbackForce);
+        Vector2 knockDir = ((Vector2)other.transform.position - (Vector2)transform.position).normalized;
+        var info = new DamageInfo(damage, damageType, owner != null ? owner : gameObject, knockDir, knockbackForce);
         target.TakeDamage(info);
 
-        alreadyHit = true;
+        hitTargets.Add(target);
+        MyLibrary.SpawnParticles(hitEffect, other.ClosestPoint(transform.position));
 
         if (destroyOnHit)
             Destroy(gameObject);
-
     }
 
-    public void ResetHit() => alreadyHit = false;
+    public void ResetHit() => hitTargets.Clear();
 } 
 
 

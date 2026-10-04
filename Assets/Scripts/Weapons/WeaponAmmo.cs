@@ -18,11 +18,8 @@ public class WeaponAmmo : MonoBehaviour
     {
         if (weapon.isPlayerWeapon)
         {
-            int savedAmmo = LevelManager.Instance.LoadAmmo(weapon.WeaponName);
-            int savedAvialableAmmo = LevelManager.Instance.LoadAmmoAmount(weapon.WeaponName);
-
-            weapon.CurrentAmmo = savedAmmo;
-            weapon.CurrentAmmo = savedAvialableAmmo;
+            // в магазин — только патроны магазина; запас хранится в LevelManager
+            weapon.CurrentAmmo = LevelManager.Instance.LoadAmmo(weapon.WeaponName);
         }
     }
 

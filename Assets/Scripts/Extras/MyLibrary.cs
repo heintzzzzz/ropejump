@@ -100,4 +100,19 @@ public static class MyLibrary
         color.a = Mathf.Clamp01(alpha); // Ограничение 0-1
         renderer.color = color;
     }
+
+    // Одноразовый эффект частиц: сам удаляется, когда отыграет
+    public static void SpawnParticles(ParticleSystem prefab, Vector3 position)
+    {
+        SpawnParticles(prefab, position, Quaternion.identity);
+    }
+
+    public static void SpawnParticles(ParticleSystem prefab, Vector3 position, Quaternion rotation)
+    {
+        if (prefab == null) return;
+
+        ParticleSystem ps = Object.Instantiate(prefab, position, rotation);
+        var main = ps.main;
+        Object.Destroy(ps.gameObject, main.duration + main.startLifetime.constantMax);
+    }
 }

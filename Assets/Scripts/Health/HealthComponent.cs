@@ -96,7 +96,6 @@ public class HealthComponent : MonoBehaviour, IDamageable
         foreach (var r in resistances)
         {
             if (r.type == type) return Mathf.RoundToInt(amount * (1f - Mathf.Clamp01(r.resistance)));
-            return amount;
         }
 		return amount;
     }

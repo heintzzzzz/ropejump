@@ -22,6 +22,7 @@ public class LevelManager : Singleton<LevelManager>
     [SerializeField] public string currentItem = null;
 
     [Header("Weapon Data List")]
+    [SerializeField] public WeaponDataItem swordData;
     /*[SerializeField] public WeaponDataItem pistolData;
     [SerializeField] public WeaponDataItem rifleData;
     [SerializeField] public WeaponDataItem shotgunData;
@@ -53,6 +54,7 @@ public class LevelManager : Singleton<LevelManager>
 
     public enum WeaponTypes
     {
+        Sword
         /*Pistol,
         Rifle,
         Shotgun,
@@ -110,7 +112,9 @@ public class LevelManager : Singleton<LevelManager>
     {
         Player = playableCharacter.transform;
 
-        weaponAvailable.Add("Knife");
+        weaponAvailable.Add("Sword");
+        
+        /*weaponAvailable.Add("Knife");
         weaponAvailable.Add("Pistol"); 
         weaponAvailable.Add("Rifle"); 
         weaponAvailable.Add("Shotgun"); 
@@ -126,7 +130,7 @@ public class LevelManager : Singleton<LevelManager>
         SaveAmmoAmount("Shotgun", 60);         
         
         SaveAmmo("Rifle", 0); 
-        SaveAmmoAmount("Rifle", 0); 
+        SaveAmmoAmount("Rifle", 0); */
 
         /*SaveSuperAmmo("Boom", 0); 
         SaveSuperAmmoAmount("Boom", 0); 
@@ -160,11 +164,10 @@ public class LevelManager : Singleton<LevelManager>
           
         }
 
-			if (started == false) {
-            	// Debug.Log("Нажато Esc222222!");  
-				roundManager.StartRound();	
-				started = true;
-			}
+		if (started == false) {
+			roundManager.StartRound();	
+			started = true;
+		}
  /*
         if (Input.GetKeyDown(KeyCode.Escape))
         { 
@@ -193,6 +196,12 @@ public class LevelManager : Singleton<LevelManager>
 
     public WeaponDataItem _getDataByType(string weaponType) 
     {
+        
+        if (weaponType == "Sword") 
+        {
+            return swordData;
+        }
+        
         /*if (weaponType == "Pistol") 
         {
             return pistolData;
@@ -358,7 +367,7 @@ public class LevelManager : Singleton<LevelManager>
     }
 
     public bool _checkWeaponAvailable(string name) {
-        bool contains = false;
+        bool contains = false; 
         if (name != null){
             contains = (weaponAvailable.IndexOf(name) >=0);
         }

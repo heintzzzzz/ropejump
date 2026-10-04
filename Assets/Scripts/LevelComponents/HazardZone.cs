@@ -26,6 +26,10 @@ public class HazardZone : MonoBehaviour
 
     public enum HazardType { Fire, Acid, Blade, Custom }
 
+    [Header("Данные")]
+    [Tooltip("If set, all settings below come from this asset (hazardType preset is ignored).")]
+    public HazardDataItem data;
+
     [Header("Тип опасности")]
     public HazardType hazardType = HazardType.Fire;
 
@@ -180,6 +184,9 @@ public class HazardZone : MonoBehaviour
     private bool isActive = false;
     private bool isFlashing = false;
 
+    private DamageType damageType;      // из data, либо из hazardType
+    private AudioClip damageSound;
+
     // Список целей внутри зоны + их таймеры тиков
     private Dictionary<HealthComponent, float> targetsInside = new Dictionary<HealthComponent, float>();
 
@@ -195,7 +202,15 @@ public class HazardZone : MonoBehaviour
         baseScale         = transform.localScale;
         baseLocalPosition = transform.localPosition;  // якорь для shake
 
-        ApplyHazardPreset();
+        if (data != null)
+        {
+            ApplyData(data);
+        }
+        else
+        {
+            ApplyHazardPreset();
+            damageType = HazardTypeToDamageType();
+        }
 
         baseColor = idleColor;
         if (sr != null) sr.color = baseColor;
@@ -237,8 +252,7 @@ public class HazardZone : MonoBehaviour
             DealDamage(health, entryDamage);
 
         // Частицы входа
-        if (entryParticlesPrefab != null)
-            Instantiate(entryParticlesPrefab, other.transform.position, Quaternion.identity);
+        MyLibrary.SpawnParticles(entryParticlesPrefab, other.transform.position);
 
         // Knockback
         if (applyKnockback)
@@ -273,7 +287,7 @@ public class HazardZone : MonoBehaviour
             else
             {
                 dot = health.gameObject.AddComponent<StatusEffectDoT>();
-                dot.damageType = HazardTypeToDamageType();
+                dot.damageType = damageType;
                 dot.dps        = statusDamagePerSecond;
                 dot.duration   = statusDuration;
                 dot.source     = gameObject;
@@ -335,9 +349,12 @@ public class HazardZone : MonoBehaviour
 
     private void DealDamage(HealthComponent health, int amount)
     {
-        var info = new DamageInfo(amount, HazardTypeToDamageType(), gameObject);
+        var info = new DamageInfo(amount, damageType, gameObject);
         health.TakeDamage(info);
         onDamageDealt?.Invoke(health.gameObject, amount);
+
+        if (damageSound != null)
+            AudioSource.PlayClipAtPoint(damageSound, health.transform.position);
     }
 
     private DamageType HazardTypeToDamageType() => hazardType switch
@@ -354,9 +371,8 @@ public class HazardZone : MonoBehaviour
 
     private void PlayTickEffects(Vector3 pos)
     {
-        // Спавним новый экземпляр префаба — он сам себя уничтожит (StopAction = Destroy)
-        if (tickParticlesPrefab != null)
-            Instantiate(tickParticlesPrefab, pos, Quaternion.identity);
+        // Одноразовый эффект — удаляется сам, даже если StopAction не стоит на Destroy
+        MyLibrary.SpawnParticles(tickParticlesPrefab, pos);
 
         // Вспышка цвета
         if (sr != null && !isFlashing)
@@ -494,6 +510,45 @@ public class HazardZone : MonoBehaviour
     // ─────────────────────────────────────────────────────────────
     //  Пресеты по типу опасности
     // ─────────────────────────────────────────────────────────────
+
+    private void ApplyData(HazardDataItem d)
+    {
+        damageType            = d.DamageType;
+        entryDamage           = d.EntryDamage;
+        damagePerTick         = d.DamagePerTick;
+        tickInterval          = d.TickInterval;
+
+        applyKnockback        = d.ApplyKnockback;
+        knockbackForce        = d.KnockbackForce;
+
+        applyStatusOnExit     = d.ApplyStatusOnExit;
+        statusDamagePerSecond = d.StatusDamagePerSecond;
+        statusDuration        = d.StatusDuration;
+
+        applySlowInside       = d.ApplySlowInside;
+        slowMultiplier        = d.SlowMultiplier;
+
+        idleColor             = d.IdleColor;
+        flashColor            = d.FlashColor;
+        flashDuration         = d.FlashDuration;
+        pulseWhenActive       = d.PulseWhenActive;
+        pulseSpeed            = d.PulseSpeed;
+        pulseAmplitude        = d.PulseAmplitude;
+        scaleOnTick           = d.ScaleOnTick;
+        scalePunch            = d.ScalePunch;
+        continuousShake       = d.ContinuousShake;
+        shakeIntensity        = d.ShakeIntensity;
+
+        tickParticlesPrefab   = d.TickParticles;
+        entryParticlesPrefab  = d.EntryParticles;
+        damageSound           = d.DamageSound;
+
+        if (d.Sprite != null && sr != null) sr.sprite = d.Sprite;
+
+        // постоянный эффект (пламя, пузыри) живёт вместе с зоной
+        if (d.AmbientParticles != null)
+            Instantiate(d.AmbientParticles, transform.position, Quaternion.identity, transform);
+    }
 
     private void ApplyHazardPreset()
     {

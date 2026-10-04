@@ -13,6 +13,8 @@ public class CharWeapon : CharComponents
     [Header("Weapon Settings")]
     [SerializeField] public String weaponToUse;
     [SerializeField] public Transform weaponHolderPosition;
+    [Tooltip("Who this character's weapons damage (player: Enemies, enemy: Player).")]
+    [SerializeField] private LayerMask targetLayers;
 
     public Weapon CurrentWeapon {get; set;}
     public int WeaponType; 
@@ -269,12 +271,19 @@ public class CharWeapon : CharComponents
             WeaponType = weaponData.weaponMode; 
             Quaternion angleR = Quaternion.Euler(0f, 0f, 0f); 
 
+            if (weaponData.WeaponToEquip == null)
+            {
+                Debug.LogError($"WeaponDataItem '{weaponData.name}' has no WeaponToEquip prefab.", weaponData);
+                return;
+            }
+
             if (weaponHolderPosition != null)
             {
-                
                 CurrentWeapon = Instantiate(weaponData.WeaponToEquip, weaponHolderPosition.position, angleR);
-                CurrentWeapon.transform.parent = weaponHolderPosition; 
-                CurrentWeapon.SetOwner(character); 
+                CurrentWeapon.transform.parent = weaponHolderPosition;
+                CurrentWeapon.SetOwner(character);
+                CurrentWeapon.Setup(weaponData);
+                if (targetLayers.value != 0) CurrentWeapon.TargetLayers = targetLayers;
                 CurrentWeapon.WeaponOwner.GetComponent<CharFlip>().SetFlipMode(weaponData.weaponMode);
                 WeaponAim = CurrentWeapon.GetComponent<WeaponAim>(); 
 
