@@ -262,7 +262,11 @@ public class CharWeapon : CharComponents
                 // CurrentWeapon.CurrentAmmo = weapon.MagazineSize;
             }
         }
-        
+
+        // без оружия — режим разворота по умолчанию; новое оружие ниже выставит свой
+        CharFlip charFlip = GetComponent<CharFlip>();
+        if (charFlip != null) charFlip.ResetFlipMode();
+
         if (weaponT != null) { 
             WeaponDataItem weaponData = LevelManager.Instance._getDataByType(weaponT);
             if (!weaponData) return;
@@ -284,8 +288,8 @@ public class CharWeapon : CharComponents
                 CurrentWeapon.SetOwner(character);
                 CurrentWeapon.Setup(weaponData);
                 if (targetLayers.value != 0) CurrentWeapon.TargetLayers = targetLayers;
-                CurrentWeapon.WeaponOwner.GetComponent<CharFlip>().SetFlipMode(weaponData.weaponMode);
-                WeaponAim = CurrentWeapon.GetComponent<WeaponAim>(); 
+                if (charFlip != null) charFlip.SetFlipMode(weaponData.FlipMode);
+                WeaponAim = CurrentWeapon.GetComponent<WeaponAim>();
 
 
                 Animator weaponAnimator = CurrentWeapon.GetComponent<Animator>();
@@ -295,11 +299,6 @@ public class CharWeapon : CharComponents
                 if (CurrentWeapon.isPlayerWeapon)   
                 {
                   //   WeaponAim?.InitReticle(); 
-                }     
-
-                if (weaponData != null && weaponData.flipMode != null)  {
-                    int fl = (weaponData.flipMode == MyLibrary.FlipMode.WeaponDirection) ? 1 : 0;
-                    CurrentWeapon.WeaponOwner.GetComponent<CharFlip>().SetFlipMode(fl); 
                 }
             }
         }

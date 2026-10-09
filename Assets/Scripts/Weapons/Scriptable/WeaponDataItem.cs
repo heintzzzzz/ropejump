@@ -48,7 +48,22 @@ public class WeaponDataItem : ScriptableObject
     public AudioClip AttackSound;
 
     [Header("Character")]
+    [Tooltip("Off = flip mode follows Kind: Melee → movement direction, Shooting → aim direction.")]
+    public bool OverrideFlipMode = false;
+    [Tooltip("Used only when OverrideFlipMode is on.")]
     public MyLibrary.FlipMode flipMode = MyLibrary.FlipMode.WeaponDirection;
     public bool isItem;
     public int weaponMode;
+
+    // как персонаж разворачивается с этим оружием в руках
+    public MyLibrary.FlipMode FlipMode
+    {
+        get
+        {
+            if (OverrideFlipMode) return flipMode;
+            return Kind == WeaponKind.Shooting
+                ? MyLibrary.FlipMode.WeaponDirection
+                : MyLibrary.FlipMode.MovementDirection;
+        }
+    }
 }

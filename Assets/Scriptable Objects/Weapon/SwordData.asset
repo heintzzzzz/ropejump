@@ -1,0 +1,39 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 595c282fa431ff5f29923186083cbdcb, type: 3}
+  m_Name: SwordData
+  m_EditorClassIdentifier: Assembly-CSharp::WeaponDataItem
+  WeaponName: Sword
+  WeaponId: sword
+  WeaponSprite: {fileID: 779080668, guid: 7dafc0139f4d6c0cf94419b28197b4df, type: 3}
+  WorldSprite: {fileID: 8368981835052362653, guid: 755542ceeee657e9e8639ddf96ef4953, type: 3}
+  WeaponToEquip: {fileID: 9048818545216069362, guid: fc3ce239531348a64ad4b677623f6553, type: 3}
+  Kind: 0
+  WeaponDamage: 0
+  DamageType: 0
+  KnockbackForce: 0
+  TimeBtwShots: 0.5
+  AttackDuration: 0.3
+  UseMagazine: 0
+  MagazineSize: 0
+  AmountSizeLimit: 0
+  ReloadType: 0
+  Ammo: {fileID: 0}
+  ProjectilesPerShot: 1
+  SpreadAngle: 0
+  AttackEffect: {fileID: 0}
+  HitEffect: {fileID: 0}
+  AttackSound: {fileID: 0}
+  OverrideFlipMode: 0
+  flipMode: 1
+  isItem: 1
+  weaponMode: 0

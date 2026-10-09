@@ -68,6 +68,8 @@ public class MeleeWeapon : Weapon
         // Даем аниматору время на инициализацию
         yield return null; // ждем следующего кадра
 
+        Debug.Log(useMeeleWeapon); 
+        
         if (animator != null) animator.SetTrigger(useMeeleWeapon);
         if (WeaponOwner != null && WeaponOwner.CharacterAnimator != null)
             WeaponOwner.CharacterAnimator.SetTrigger(useMeeleWeapon);
