@@ -19,6 +19,12 @@ public class Character : MonoBehaviour
     public GameObject CharacterSprite => characterSprite;
     public Animator CharacterAnimator => characterAnimator;
 
+    void Awake()
+    {
+        // если в инспекторе не назначен — берём аниматор со спрайта
+        if (characterAnimator == null) characterAnimator = GetComponentInChildren<Animator>();
+    }
+
     // Start is called before the first frame update
     void Start()
     {

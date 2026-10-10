@@ -11,7 +11,7 @@ public class MeleeWeapon : Weapon
     private BoxCollider2D _boxCollider2D;
     private DamageDealer _damageDealer;
     private bool _isAttacking = false;
-    private readonly int useMeeleWeapon = Animator.StringToHash("UseMeeleWeapon");
+    private readonly int useMeeleWeapon = Animator.StringToHash("UseMeeleWeapon");  
 
     private void Start()
     {
