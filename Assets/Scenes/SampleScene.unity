@@ -882,6 +882,8 @@ MonoBehaviour:
   bottomDelay: 1
   topDelay: 1
   boundaryHorizontalMultiplier: 0.33333334
+  maxVerticalOffset: 2
+  offsetReturnSpeed: 3
 --- !u!114 &589018763
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1643,17 +1645,12 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1414879385 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 7736442191787815815, guid: 867e652ee54c1e6129fcf724c1f8f937, type: 3}
-  m_PrefabInstance: {fileID: 3196454955005300280}
-  m_PrefabAsset: {fileID: 0}
 --- !u!114 &1414879392 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 4902749314298418379, guid: 867e652ee54c1e6129fcf724c1f8f937, type: 3}
   m_PrefabInstance: {fileID: 3196454955005300280}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1414879385}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a9bd266aae304da7e8ee1779f1253448, type: 3}
@@ -1669,34 +1666,12 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 7678793222757652167, guid: 867e652ee54c1e6129fcf724c1f8f937, type: 3}
   m_PrefabInstance: {fileID: 3196454955005300280}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1414879385}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: eb5223cb53aeafb23b7672dcfe87aa4a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RubberBandController
---- !u!95 &1414879399
-Animator:
-  serializedVersion: 7
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1414879385}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: e11cf3c037e05c9b984344595ee19afe, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_StabilizeFeet: 0
-  m_AnimatePhysics: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &1424288349
 GameObject:
   m_ObjectHideFlags: 0
@@ -2777,9 +2752,6 @@ PrefabInstance:
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 7736442191787815815, guid: 867e652ee54c1e6129fcf724c1f8f937, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1414879399}
     - targetCorrespondingSourceObject: {fileID: 130356126242985834, guid: 867e652ee54c1e6129fcf724c1f8f937, type: 3}
       insertIndex: -1
       addedObject: {fileID: 35236894}

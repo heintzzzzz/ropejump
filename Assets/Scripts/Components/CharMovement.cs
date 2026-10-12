@@ -29,11 +29,13 @@ public class CharMovement : CharComponents
 
     private void MoveChar()
     {
-        // Vertical position is driven entirely by the RubberBandController cycle.
+        // Vertical position is driven by the RubberBandController cycle; W/S only adds an offset
+        // while falling/ascending (RubberBandController decides when it's allowed).
         // Horizontal speed is scaled down while hovering at a top/bottom extreme point.
         float horizontalMultiplier = гubberCtrl != null ? гubberCtrl.HorizontalSpeedMultiplier : 1f;
+        float vertical = гubberCtrl != null ? verticalInput : 0f;
 
-        Vector2 movementSpeed = new Vector2(horizontalInput * horizontalMultiplier, 0f) * MoveSpeed;
+        Vector2 movementSpeed = new Vector2(horizontalInput * horizontalMultiplier, vertical) * MoveSpeed;
 
         controller.SetMovement(movementSpeed);
     }

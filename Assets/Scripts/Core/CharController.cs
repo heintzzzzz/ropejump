@@ -30,9 +30,17 @@ public class CharController : MonoBehaviour
     private void MoveCharacter()
     {
         float targetX = myRigidbody2D.position.x + CurrentMovement.x * Time.fixedDeltaTime;
-        float targetY = rubberBand != null
-            ? rubberBand.TargetY
-            : myRigidbody2D.position.y + CurrentMovement.y * Time.fixedDeltaTime;
+        float targetY;
+        if (rubberBand != null)
+        {
+            // W/S only nudges the player around the bungee's Y, it never replaces it
+            rubberBand.ApplyVerticalMovement(CurrentMovement.y, Time.fixedDeltaTime);
+            targetY = rubberBand.DesiredY;
+        }
+        else
+        {
+            targetY = myRigidbody2D.position.y + CurrentMovement.y * Time.fixedDeltaTime;
+        }
 
         myRigidbody2D.MovePosition(new Vector2(targetX, targetY));
     }

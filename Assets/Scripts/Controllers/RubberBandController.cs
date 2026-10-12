@@ -43,6 +43,13 @@ public class RubberBandController : MonoBehaviour
     [Range(0f, 1f)]
     public float boundaryHorizontalMultiplier = 1f / 3f;
 
+    [Header("Vertical Control")]
+    [Tooltip("How far (units) W/S can push the player away from the bungee's Y while falling/ascending.")]
+    public float maxVerticalOffset = 2f;
+
+    [Tooltip("Speed (units per second) at which the offset returns to the bungee's Y when there is no input or control is not allowed.")]
+    public float offsetReturnSpeed = 3f;
+
     // ─────────────────────────────────────────────
     //  Public State (read from other scripts)
     // ─────────────────────────────────────────────
@@ -83,11 +90,32 @@ public class RubberBandController : MonoBehaviour
     /// </summary>
     public float TargetY { get; private set; }
 
+    /// <summary>True while the player may steer up/down with W/S (falling, ascending and their overshoots).</summary>
+    public bool VerticalControlAllowed =>
+        CurrentPhase == Phase.Falling || CurrentPhase == Phase.BottomOvershoot ||
+        CurrentPhase == Phase.Ascending || CurrentPhase == Phase.TopOvershoot;
+
+    /// <summary>The bungee's Y plus the player's W/S offset — what CharController should move to.</summary>
+    public float DesiredY => TargetY + verticalOffset;
+
+    /// <summary>
+    /// Called by CharController every FixedUpdate with the vertical speed from input.
+    /// Accumulates the offset while control is allowed, otherwise eases it back to 0.
+    /// </summary>
+    public void ApplyVerticalMovement(float speed, float deltaTime)
+    {
+        if (VerticalControlAllowed && !Mathf.Approximately(speed, 0f))
+            verticalOffset = Mathf.Clamp(verticalOffset + speed * deltaTime, -maxVerticalOffset, maxVerticalOffset);
+        else
+            verticalOffset = Mathf.MoveTowards(verticalOffset, 0f, offsetReturnSpeed * deltaTime);
+    }
+
     // ─────────────────────────────────────────────
     //  Private State
     // ─────────────────────────────────────────────
- 
+
     private Rigidbody2D rb;
+    private float verticalOffset;  // W/S offset from TargetY
     private float stretchLength;   // distance A → B
     private float overshootDist;   // stretchLength * overshooftPercent
     private float yBottom;         // pointB.y
@@ -131,6 +159,7 @@ public class RubberBandController : MonoBehaviour
         if (cycleActive) return;
         rb.position = new Vector2(rb.position.x, yTop);
         TargetY = yTop;
+        verticalOffset = 0f;
         cycleActive = true;
         StartCoroutine(RunCycle());
     }
@@ -143,6 +172,7 @@ public class RubberBandController : MonoBehaviour
         cycleActive = false;
         StopAllCoroutines();
         CurrentPhase = Phase.Idle;
+        verticalOffset = 0f;
         rb.linearVelocity = Vector2.zero;
     }
  
