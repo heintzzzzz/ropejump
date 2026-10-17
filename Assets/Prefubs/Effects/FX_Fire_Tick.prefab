@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 6660843339470056068}
   - component: {fileID: 2540440680803506888}
   - component: {fileID: 4332386649363497017}
-  m_Layer: 0
+  m_Layer: 15
   m_Name: FX_Fire_Tick
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4859,9 +4859,9 @@ ParticleSystemRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_GlobalIlluminationMeshLod: 0
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingLayerID: -77101885
+  m_SortingLayer: 7
+  m_SortingOrder: 10
   m_MaskInteraction: 0
   m_RenderMode: 0
   m_MeshDistribution: 0
