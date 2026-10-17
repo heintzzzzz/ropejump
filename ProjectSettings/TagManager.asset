@@ -47,6 +47,9 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: Background
+    uniqueID: 980239863
+    locked: 0
   - name: New Layer 1
     uniqueID: 2120716003
     locked: 0
@@ -56,6 +59,12 @@ TagManager:
   - name: New Layer 3
     uniqueID: 3220140047
     locked: 0
+  - name: LevelBackground
+    uniqueID: 3533429493
+    locked: 0
+  - name: LevelBackObjects
+    uniqueID: 266336033
+    locked: 0
   - name: DangerObstacle
     uniqueID: 4217865411
     locked: 0
@@ -64,6 +73,9 @@ TagManager:
     locked: 0
   - name: New Layer 6
     uniqueID: 3515970881
+    locked: 0
+  - name: FrontBackground
+    uniqueID: 304781589
     locked: 0
   - name: New Layer 7
     uniqueID: 1845982319
