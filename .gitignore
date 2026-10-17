@@ -102,3 +102,7 @@ Desktop.ini
 
 # Claude Code local settings
 .claude/settings.local.json
+
+# Local agent instructions and their Unity metadata
+AGENTS.md
+AGENTS.md.meta

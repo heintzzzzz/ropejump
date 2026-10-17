@@ -74,6 +74,9 @@ TagManager:
   - name: New Layer 6
     uniqueID: 3515970881
     locked: 0
+  - name: Effects
+    uniqueID: 3226518895
+    locked: 0
   - name: FrontBackground
     uniqueID: 304781589
     locked: 0

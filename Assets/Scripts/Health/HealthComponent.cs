@@ -11,7 +11,7 @@ public interface IDamageable
 public class HealthComponent : MonoBehaviour, IDamageable
 { 
     [Header("Health")] 
-    public int maxHealth = 100;
+    [SerializeField] private int maxHealth = 100;
 
     [SerializeField] private int currentHealth;
 
@@ -41,7 +41,11 @@ public class HealthComponent : MonoBehaviour, IDamageable
     public bool IsInvincible { get; private set; }
     
     // --- LifeCycle ----------------------------------------------------
-    private void Awake() => currentHealth = maxHealth;
+    private void Awake()
+    {
+        maxHealth = Mathf.Max(1, maxHealth);
+        currentHealth = maxHealth;
+    }
 
     public void TakeDamage(DamageInfo info)
     {
@@ -76,10 +80,12 @@ public class HealthComponent : MonoBehaviour, IDamageable
 
     public void Heal(int amount)
     {
-        if (!IsAlive) return;
+        if (!IsAlive || amount < 0 || amount == 0) return;
+        int healedAmount = ((currentHealth + amount) > maxHealth) ? maxHealth - currentHealth : amount;
+        
         currentHealth = Mathf.Min(maxHealth, currentHealth + amount);
         onHealthChanged?.Invoke(currentHealth);
-        onHealed?.Invoke(amount); 
+        onHealed?.Invoke(healedAmount); 
     }
     
     // --- Untilities ----------------------------------------------------
@@ -105,6 +111,11 @@ public class HealthComponent : MonoBehaviour, IDamageable
         IsInvincible = true;
         yield return new WaitForSeconds(invincibilityDuration);
         IsInvincible = false;
+    }
+
+    private void OnValidate()
+    {
+        maxHealth = Mathf.Max(1, maxHealth);
     }
 
 }

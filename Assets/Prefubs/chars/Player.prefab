@@ -79,7 +79,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: -900957349
-  m_SortingLayer: 5
+  m_SortingLayer: 8
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_Sprite: {fileID: 1288134695594566189, guid: 73c1f93a6196685569899bf82a9d6b2a, type: 3}
@@ -240,7 +240,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7736442191787815815}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 09c22330403f1ef3f9e46039556bc395, type: 3}
   m_Name: 
@@ -270,6 +270,8 @@ MonoBehaviour:
   bottomDelay: 1
   topDelay: 1
   boundaryHorizontalMultiplier: 0.33333334
+  maxVerticalOffset: 2
+  offsetReturnSpeed: 3
 --- !u!114 &6661820477295009934
 MonoBehaviour:
   m_ObjectHideFlags: 0
